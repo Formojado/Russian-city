@@ -12,26 +12,30 @@
 
     /* 開始畫面 */
     .overlay-start{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(15, 23, 42, 0.95);z-index:1000;}
-    .start-box{background:#fff;color:#04263b;padding:40px;border-radius:24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.6);max-width:450px; line-height: 1.6;}
+    .start-box{background:#fff;color:#04263b;padding:40px;border-radius:24px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.6);max-width:550px; line-height: 1.6;}
     .start-box h2{margin:0 0 15px 0; color:#1e293b; font-size: 2rem;}
     
+    /* 方法 1：修正排版，強制不換行 */
+    .start-box p {
+      font-size: 1.05rem;
+      white-space: nowrap; 
+      margin-bottom: 20px;
+    }
+
     /* 頂部資訊欄 */
     .info-bar{position:absolute;top:15px;left:50%;transform:translateX(-50%);background:rgba(15, 23, 42, 0.95);padding:12px 30px;border-radius:18px;display:flex;gap:25px;z-index:900;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.15);box-shadow:0 8px 32px rgba(0,0,0,0.5);}
     .info-item{display:flex;flex-direction:column;align-items:center; min-width: 70px;}
     .info-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;opacity:0.6;margin-bottom:4px;}
     .info-value{font-size:1.3rem;font-weight:800; font-variant-numeric: tabular-nums;}
 
-    /* 狀態顏色 - 綠色霓虹效果 */
     .status-alive{color: #22c55e; text-shadow: 0 0 15px rgba(34,197,94,0.8);}
     .status-dead{color: #ef4444; text-shadow: 0 0 15px rgba(239,68,68,0.8); animation: blink 0.8s infinite;}
 
-    /* 當前目標標題 */
     .city-title{position:absolute;top:120px;left:50%;transform:translateX(-50%);z-index:1001;font-size:2.5rem;font-weight:900;color:#fff;text-shadow:0 0 25px rgba(0,0,0,1), 4px 4px 0px #e11d48;pointer-events:none;text-align:center;width:100%;}
 
     .btn{background:#e11d48;color:#fff;border:none;padding:16px 32px;border-radius:14px;font-weight:700;cursor:pointer;font-size:1.1rem;transition:0.2s; margin-top: 15px;}
     .btn:hover{background:#be123c; transform: translateY(-2px);}
 
-    /* 結算彈窗 */
     .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.92);display:flex;align-items:center;justify-content:center;z-index:2000;backdrop-filter:blur(12px);}
     .modal{background:#fff;color:#04263b;padding:45px;border-radius:28px;width:380px;text-align:center;}
     
@@ -52,7 +56,8 @@
   <div id="overlayStart" class="overlay-start">
     <div class="start-box">
       <h2>Russia City Speedrun</h2>
-      <p><b>Survival Rules:</b><br>Russia is vast! Your click must be within <b>100km</b> of the target city.<br>If you miss, you are "OUT", but you can keep playing for practice.</p>
+      <p><b>Survival Rules:</b> Russia is vast! Your click must be within 100km of the target city.</p>
+      <p>If you miss, you are "OUT", but you can keep playing for practice.</p>
       <button id="startBtn" class="btn">Start Russian Run</button>
     </div>
   </div>
@@ -68,15 +73,13 @@
   </div>
 
   <script>
-    // 30個大城市數據 (英俄雙語)
     const RUSSIA_CITIES = [
-        {name:"Moscow (Москва)",coords:[55.7558,37.6173]},{name:"Saint Petersburg (Санкт-Петербург)",coords:[59.9343,30.3351]},{name:"Novosibirsk (Новосибирск)",coords:[55.0084,82.9357]},{name:"Yekaterinburg (Екатеринбург)",coords:[56.8389,60.6057]},{name:"Kazan (Казань)",coords:[55.7887,49.1221]},{name:"Nizhny Novgorod (Нижний Новгород)",coords:[56.3269,44.0059]},{name:"Chelyabinsk (Челябинск)",coords:[55.1644,61.4368]},{name:"Samara (Самара)",coords:[53.2029,50.1508]},{name:"Omsk (Омск)",coords:[54.9885,73.3242]},{name:"Rostov-on-Don (Ростов-на-Дону)",coords:[47.2357,39.7015]},{name:"Ufa (Уфа)",coords:[54.7388,55.9721]},{name:"Krasnoyarsk (Красноярск)",coords:[56.0153,92.8932]},{name:"Voronezh (Воронеж)",coords:[51.6608,39.2003]},{name:"Perm (Пермь)",coords:[58.0105,56.2502]},{name:"Volgograd (Волгоград)",coords:[48.708,44.5133]},{name:"Krasnodar (Краснодар)",coords:[45.0393,38.9872]},{name:"Saratov (Саратов)",coords:[51.5336,46.0342]},{name:"Tyumen (Тюмень)",coords:[57.1522,65.5272]},{name:"Tolyatti (Тольятти)",coords:[53.5078,49.4192]},{name:"Izhevsk (Ижевск)",coords:[56.8498,53.2045]},{name:"Barnaul (Барнаул)",coords:[53.3497,83.7673]},{name:"Irkutsk (Иркутск)",coords:[52.287,104.305]},{name:"Ulyanovsk (Ульяновск)",coords:[54.3142,48.4031]},{name:"Khabarovsk (Хабаровск)",coords:[48.4726,135.0577]},{name:"Vladivostok (Владивосток)",coords:[43.1198,131.8869]},{name:"Yaroslavl (Ярославль)",coords:[57.6261,39.8845]},{name:"Orenburg (Оренбург)",coords:[51.7666,55.0988]},{name:"Tomsk (Томск)",coords:[56.4977,84.9744]},{name:"Kemerovo (Кемерово)",coords:[55.351,86.0871]},{name:"Astrakhan (Астрахань)",coords:[46.3476,48.0302]}
+        {name:"Moscow (Москва)",coords:[55.7558,37.6173]},{name:"Saint Petersburg (Санкт-Петербург)",coords:[59.9343,30.3351]},{name:"Novosibirsk (Новосибирск)",coords:[55.0084,82.9357]},{name:"Yekaterinburg (Екатеринбург)",coords:[56.8389,60.6057]},{name:"Kazan (Казань)",coords:[55.7887,49.1221]},{name:"Nizhny Novgorod (Нижний Новгород)",coords:[56.3269,44.0059]},{name:"Chelyabinsk (Челябинск)",coords:[55.1644,61.4368]},{name:"Samara (Самара)",coords:[53.2029,50.1508]},{name:"Omsk (Омск)",coords:[54.9885,73.3242]},{name:"Rostov-on-Don (Ростов-на-Дону)",coords:[47.2357,39.7015]},{name:"Ufa (Уфа)",coords:[54.7388,55.9721]},{name:"Krasnoyarsk (Красноярск)",coords:[56.0153,92.8932]},{name:"Voronezh (Воронеж)",coords:[51.6608,39.2003]},{name:"Perm (Пермь)",coords:[58.0105,56.2502]},{name:"Volgograd (Волгоград)",coords:[48.708,44.5133]},{name:"Krasnodar (Краснодар)",coords:[45.0393,38.9872]},{name:"Saratov (Саратов)",coords:[51.5336,46.0342]},{name:"Tyumen (Тюмень)",coords:[57.1522,65.5272]},{name:"Tolyatti (Тольятти)",coords:[53.5078,49.4192]},{name:"Izhevsk (Ижевск)",coords:[56.8498,53.2045]},{name:"Barnaul (Барнаул)",coords:[53.3497,83.7673]},{name:"Irkutsk (Иркутск)",coords:[52.287,104.305]},{name:"Ulyanovsk (Ульяновск)",coords:[54.3142,48.4031]},{name:"Khabarovsk (Хабаровск)",coords:[48.4726,135.0577]},{name:"Vladivostok (Владивосток)",coords:[43.1198,131.8869]},{name:"Yaroslavl (Ярославль)",coords:[57.6261,39.8845]},{name:"Orenburg (О營堡)",coords:[51.7666,55.0988]},{name:"Tomsk (托木斯克)",coords:[56.4977,84.9744]},{name:"Kemerovo (克麥羅沃)",coords:[55.351,86.0871]},{name:"Astrakhan (阿斯特拉罕)",coords:[46.3476,48.0302]}
     ];
 
     let cities=[], index=0, started=false, answered=false, markers=[], circles=[], score=0, startTime=null, timerInterval=null;
     let isGameOver = false, deathCity = "", currentCityMarker = null;
 
-    // 使用 Voyager 亮色標籤地圖
     const map = L.map('map', {zoomControl:false}).setView([60, 95], 3);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png').addTo(map);
 
@@ -131,7 +134,6 @@
       const dist=haversine(clickCoords, city.coords);
       
       markers.push(L.circleMarker(clickCoords, {radius:8, color:'#3b82f6', fillOpacity:1}).addTo(map));
-      // 俄羅斯版誤差範圍設為 100km (100000公尺)
       circles.push(L.circle(city.coords, {radius: 100000, color: '#22c55e', weight: 3, fillOpacity: 0.2}).addTo(map));
       currentCityMarker = L.marker(city.coords).addTo(map).bindPopup(`<b>${city.name}</b><br>${dist.toFixed(1)} km`).openPopup();
 
